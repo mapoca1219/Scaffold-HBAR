@@ -1,3 +1,4 @@
+import { fetchLiveBalance } from "./utils/liveHedera";
 import React, { useState } from 'react';
 import { 
   Bot, 
@@ -38,6 +39,8 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<'ai_pay' | 'hts_gate' | 'audit_trail'>('ai_pay');
 
   // Simulated connected wallet account
+
+
   const [wallet, setWallet] = useState<WalletAccount>({
     accountId: '0.0.482910',
     alias: 'Developer.hbar',
@@ -61,6 +64,18 @@ export default function App() {
     walletProvider: 'HashPack',
     connected: true,
   });
+
+
+  React.useEffect(() => {
+    const loadLiveBalance = async () => {
+      const liveBalance = await fetchLiveBalance("0.0.2");
+      if (liveBalance !== null) {
+        setWallet(prev => ({ ...prev, hbarBalance: liveBalance, accountId: "0.0.2", alias: "Hedera Treasury (Live)" }));
+      }
+    };
+    loadLiveBalance();
+  }, []);
+
 
   // Modal states
   const [explorerDetail, setExplorerDetail] = useState<HashScanDetail | null>(null);
