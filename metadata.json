@@ -1,0 +1,6 @@
+{
+  "name": "Scaffold-HBAR Multiverse Starter Kit",
+  "description": "Plantilla Web3 interactiva para Hedera Hashgraph: AI Pay-Per-Query, HTS Token-Gating y Enterprise HCS Audit Trail Notary.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
