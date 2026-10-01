@@ -181,28 +181,13 @@ export default function App() {
 
   const handleFaucet = async () => {
     if (wallet.walletProvider === 'MetaMask') {
-      // Real wallet connected, try real transfer
-      setFaucetLoading(true);
-      const success = await transferTestnetHbar(wallet.accountId, 50);
-      setFaucetLoading(false);
-      
-      if (success) {
-        setWallet(prev => ({
-          ...prev,
-          hbarBalance: prev.hbarBalance + 50.0,
-        }));
-        addNotification(
-          'Testnet Faucet Exitoso',
-          `Transacción real completada. Se enviaron 50 HBAR a ${wallet.accountId}`,
-          'success'
-        );
-      } else {
-        addNotification(
-          'Error del Faucet Real',
-          'No se configuró la cuenta del tesoro en .env (VITE_HEDERA_PRIVATE_KEY) o no hay fondos. Usa portal.hedera.com',
-          'error'
-        );
-      }
+      // Abre el portal oficial de Hedera porque el usuario necesita HBAR reales
+      window.open('https://portal.hedera.com/register', '_blank');
+      addNotification(
+        'Redirigiendo al Faucet Oficial',
+        'Para fondear una cuenta real de MetaMask, por favor usa el Portal de Hedera.',
+        'info'
+      );
     } else {
       // Simulated wallet
       setWallet(prev => ({
