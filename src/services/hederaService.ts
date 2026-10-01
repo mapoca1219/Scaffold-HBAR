@@ -1,4 +1,4 @@
-import { Client, TopicMessageSubmitTransaction, AccountBalanceQuery, AccountId, PrivateKey } from '@hashgraph/sdk';
+import { Client, TopicMessageSubmitTransaction, AccountBalanceQuery, AccountId, PrivateKey, TransferTransaction, Hbar } from '@hashgraph/sdk';
 
 // Initialize a Hedera client (Testnet by default)
 export const getHederaClient = () => {
@@ -49,5 +49,21 @@ export const submitRealHcsMessage = async (topicId: string, message: string) => 
   } catch (error) {
     console.error("Error submitting HCS message:", error);
     return null;
+  }
+};
+
+
+export const transferTestnetHbar = async (toAccountId: string, amount: number) => {
+  try {
+    const client = getHederaClient();
+    const tx = await new TransferTransaction()
+      .addHbarTransfer(client.operatorAccountId!, Hbar.from(-amount))
+      .addHbarTransfer(toAccountId, Hbar.from(amount))
+      .execute(client);
+    const receipt = await tx.getReceipt(client);
+    return receipt.status.toString() === 'SUCCESS';
+  } catch (error) {
+    console.error("Error transferring HBAR:", error);
+    return false;
   }
 };
