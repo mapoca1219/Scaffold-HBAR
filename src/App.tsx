@@ -69,17 +69,35 @@ export default function App() {
 
   
   React.useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+
     const loadLiveBalance = async () => {
-      // Don't fetch if it's one of the simulated fallback accounts (like newbie or auditor mock)
       if (wallet.accountId === '0.0.992817' || wallet.accountId === '0.0.109284') return;
       
       const liveBalance = await fetchLiveBalance(wallet.accountId);
-      if (liveBalance !== null && liveBalance !== wallet.hbarBalance) {
-        setWallet(prev => ({ ...prev, hbarBalance: liveBalance, alias: prev.walletProvider === 'MetaMask' ? 'MetaMask.eth' : 'LiveTestnet.hbar' }));
+      if (liveBalance !== null) {
+        setWallet(prev => {
+          // Only update state if the balance actually changed to avoid unnecessary re-renders
+          if (prev.hbarBalance !== liveBalance) {
+            return { ...prev, hbarBalance: liveBalance, alias: prev.walletProvider === 'MetaMask' ? 'MetaMask.eth' : 'LiveTestnet.hbar' };
+          }
+          return prev;
+        });
       }
     };
+
+    // Load immediately on mount or account change
     loadLiveBalance();
-  }, [wallet.accountId]);
+
+    // Set up polling every 5 seconds for real-time updates
+    if (wallet.walletProvider === 'MetaMask' || wallet.accountId === '0.0.2') {
+      intervalId = setInterval(loadLiveBalance, 5000);
+    }
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [wallet.accountId, wallet.walletProvider]);
 
 
 
