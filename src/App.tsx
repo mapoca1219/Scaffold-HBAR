@@ -1,4 +1,5 @@
 import { fetchLiveBalance } from "./utils/liveHedera";
+import { transferTestnetHbar } from "./services/hederaService";
 import React, { useState } from 'react';
 import { 
   Bot, 
@@ -157,17 +158,45 @@ export default function App() {
     return true;
   };
 
-  // Faucet simulation
-  const handleFaucet = () => {
-    setWallet(prev => ({
-      ...prev,
-      hbarBalance: prev.hbarBalance + 50.0,
-    }));
-    addNotification(
-      'Faucet de Testnet Exitoso',
-      `Se han acreditado 50.00 HBAR a la cuenta ${wallet.accountId}. Nuevo saldo: ${(wallet.hbarBalance + 50).toFixed(2)} ℏ`,
-      'success'
-    );
+  // Faucet simulation / execution
+  const [faucetLoading, setFaucetLoading] = useState(false);
+
+  const handleFaucet = async () => {
+    if (wallet.walletProvider === 'MetaMask') {
+      // Real wallet connected, try real transfer
+      setFaucetLoading(true);
+      const success = await transferTestnetHbar(wallet.accountId, 50);
+      setFaucetLoading(false);
+      
+      if (success) {
+        setWallet(prev => ({
+          ...prev,
+          hbarBalance: prev.hbarBalance + 50.0,
+        }));
+        addNotification(
+          'Testnet Faucet Exitoso',
+          `Transacción real completada. Se enviaron 50 HBAR a ${wallet.accountId}`,
+          'success'
+        );
+      } else {
+        addNotification(
+          'Error del Faucet Real',
+          'No se configuró la cuenta del tesoro en .env (VITE_HEDERA_PRIVATE_KEY) o no hay fondos. Usa portal.hedera.com',
+          'error'
+        );
+      }
+    } else {
+      // Simulated wallet
+      setWallet(prev => ({
+        ...prev,
+        hbarBalance: prev.hbarBalance + 50.0,
+      }));
+      addNotification(
+        'Faucet Simulado Exitoso',
+        `Se han acreditado 50.00 HBAR a la cuenta ${wallet.accountId}. (Modo Demo)`,
+        'success'
+      );
+    }
   };
 
   // Account selector
