@@ -1,4 +1,4 @@
-import { Client, TopicMessageSubmitTransaction, AccountBalanceQuery, AccountId, PrivateKey, TransferTransaction, Hbar } from '@hashgraph/sdk';
+import { Client, TopicMessageSubmitTransaction, AccountBalanceQuery, AccountId, PrivateKey, TransferTransaction, Hbar, HbarUnit } from '@hashgraph/sdk';
 
 // Initialize a Hedera client (Testnet by default)
 export const getHederaClient = () => {
@@ -57,8 +57,8 @@ export const transferTestnetHbar = async (toAccountId: string, amount: number) =
   try {
     const client = getHederaClient();
     const tx = await new TransferTransaction()
-      .addHbarTransfer(client.operatorAccountId!, Hbar.from(-amount))
-      .addHbarTransfer(toAccountId, Hbar.from(amount))
+      .addHbarTransfer(client.operatorAccountId!, Hbar.from(-amount, HbarUnit.Hbar))
+      .addHbarTransfer(toAccountId, Hbar.from(amount, HbarUnit.Hbar))
       .execute(client);
     const receipt = await tx.getReceipt(client);
     return receipt.status.toString() === 'SUCCESS';

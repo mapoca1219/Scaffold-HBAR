@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Zap, 
   Activity, 
@@ -7,7 +7,7 @@ import {
   ExternalLink, 
   Code2, 
   CheckCircle2, 
-  ChevronDown,
+  ChevronDown, ChevronRight,
   Layers,
   Sparkles
 } from 'lucide-react';
@@ -31,7 +31,30 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenDocs,
   onConnectMetaMask,
 }) => {
+  
   const [showAccountDropdown, setShowAccountDropdown] = useState(false);
+  const [txHistory, setTxHistory] = useState<any[]>([]);
+  const [txLoading, setTxLoading] = useState(false);
+
+  useEffect(() => {
+    if (showAccountDropdown && wallet.walletProvider === 'MetaMask') {
+      const fetchTx = async () => {
+        setTxLoading(true);
+        try {
+          const res = await fetch(`https://testnet.mirrornode.hedera.com/api/v1/transactions?account.id=${wallet.accountId}&limit=4`);
+          if (res.ok) {
+            const data = await res.json();
+            setTxHistory(data.transactions || []);
+          }
+        } catch (e) {
+          console.error(e);
+        }
+        setTxLoading(false);
+      };
+      fetchTx();
+    }
+  }, [showAccountDropdown, wallet.accountId, wallet.walletProvider]);
+
   const [faucetLoading, setFaucetLoading] = useState(false);
 
   const sampleAccounts = [
@@ -212,9 +235,56 @@ export const Header: React.FC<HeaderProps> = ({
                     );
                   })}
                 </div>
+                
                 <div className="mt-2 border-t border-slate-800 pt-2 px-2 text-[10px] text-slate-500">
                   Conectado vía: <span className="text-slate-300">{wallet.walletProvider} (Testnet)</span>
                 </div>
+
+                {/* Historial de Movimientos Real */}
+                {wallet.walletProvider === 'MetaMask' && (
+                  <div className="mt-2 border-t border-slate-800 pt-2">
+                    <div className="px-2 pb-1.5 text-[9px] font-semibold uppercase tracking-wider text-slate-400 flex items-center space-x-1">
+                      <Activity className="h-3 w-3 text-emerald-400" />
+                      <span>Movimientos Recientes</span>
+                    </div>
+                    {txLoading ? (
+                      <div className="px-2 py-2 text-xs text-slate-500 text-center animate-pulse">Cargando blockchain...</div>
+                    ) : txHistory.length > 0 ? (
+                      <div className="space-y-1 px-1">
+                        {txHistory.map(tx => {
+                          // Buscar si recibio o envio HBAR
+                          const myTransfer = tx.transfers?.find((t: any) => t.account === wallet.accountId);
+                          const amount = myTransfer ? (myTransfer.amount / 100000000).toFixed(2) : '0.00';
+                          const isPositive = myTransfer && myTransfer.amount > 0;
+                          return (
+                            <a
+                              key={tx.transaction_id}
+                              href={`https://hashscan.io/testnet/transaction/${tx.transaction_id}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="flex items-center justify-between rounded p-1.5 hover:bg-slate-800 transition-colors"
+                            >
+                              <div className="flex items-center space-x-2 truncate">
+                                {isPositive ? (
+                                  <div className="flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400"><ChevronDown className="h-3 w-3" /></div>
+                                ) : (
+                                  <div className="flex h-4 w-4 items-center justify-center rounded-full bg-rose-500/20 text-rose-400"><ChevronRight className="h-3 w-3" /></div>
+                                )}
+                                <span className="text-[10px] text-slate-300 font-mono truncate w-24">{tx.transaction_id.split('-')[0]}</span>
+                              </div>
+                              <span className={`text-[10px] font-mono font-bold ${isPositive ? 'text-emerald-400' : 'text-slate-400'}`}>
+                                {isPositive ? '+' : ''}{amount} ℏ
+                              </span>
+                            </a>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <div className="px-2 py-2 text-xs text-slate-500 text-center">No hay movimientos recientes</div>
+                    )}
+                  </div>
+                )}
+
               </div>
             )}
           </div>
