@@ -66,15 +66,20 @@ export default function App() {
   });
 
 
+  
   React.useEffect(() => {
     const loadLiveBalance = async () => {
-      const liveBalance = await fetchLiveBalance("0.0.2");
-      if (liveBalance !== null) {
-        setWallet(prev => ({ ...prev, hbarBalance: liveBalance, accountId: "0.0.2", alias: "Hedera Treasury (Live)" }));
+      // Don't fetch if it's one of the simulated fallback accounts (like newbie or auditor mock)
+      if (wallet.accountId === '0.0.992817' || wallet.accountId === '0.0.109284') return;
+      
+      const liveBalance = await fetchLiveBalance(wallet.accountId);
+      if (liveBalance !== null && liveBalance !== wallet.hbarBalance) {
+        setWallet(prev => ({ ...prev, hbarBalance: liveBalance, alias: prev.walletProvider === 'MetaMask' ? 'MetaMask.eth' : 'LiveTestnet.hbar' }));
       }
     };
     loadLiveBalance();
-  }, []);
+  }, [wallet.accountId]);
+
 
 
   // Modal states
@@ -95,6 +100,48 @@ export default function App() {
 
   const removeNotification = (id: string) => {
     setNotifications(prev => prev.filter(n => n.id !== id));
+  };
+
+
+  const connectMetaMask = async () => {
+    if (typeof (window as any).ethereum !== 'undefined') {
+      try {
+        const accounts = await (window as any).ethereum.request({ method: 'eth_requestAccounts' });
+        if (accounts.length > 0) {
+          const evmAddress = accounts[0];
+          // Fetch from mirror node
+          const response = await fetch(`https://testnet.mirrornode.hedera.com/api/v1/accounts/${evmAddress}`);
+          let hederaId = evmAddress;
+          let balance = 0;
+          if (response.ok) {
+            const data = await response.json();
+            hederaId = data.account;
+            balance = data.balance.balance / 100_000_000;
+          }
+          
+          setWallet({
+            accountId: hederaId,
+            alias: 'MetaMask.eth',
+            hbarBalance: balance,
+            tokens: [{
+              tokenId: '0.0.781294',
+              tokenName: 'Hedera AccessPass VIP',
+              symbol: 'ACCESS-VIP',
+              balance: 0,
+              decimals: 0,
+            }],
+            walletProvider: 'MetaMask',
+            connected: true,
+          });
+          
+          addNotification('MetaMask Conectado', `Billetera en vivo: ${hederaId}`, 'success');
+        }
+      } catch (error) {
+        addNotification('Error de MetaMask', 'No se pudo conectar la billetera.', 'error');
+      }
+    } else {
+      addNotification('MetaMask no encontrado', 'Por favor instala la extensión de MetaMask o un navegador Web3.', 'error');
+    }
   };
 
   // Balance deduction helper
@@ -164,6 +211,7 @@ export default function App() {
         onSelectAccount={handleSelectAccount}
         onOpenExplorer={detail => setExplorerDetail(detail)}
         onOpenDocs={() => setIsDocsOpen(true)}
+        onConnectMetaMask={connectMetaMask}
       />
 
       {/* Main Container */}

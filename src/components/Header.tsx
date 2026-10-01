@@ -20,6 +20,7 @@ interface HeaderProps {
   onSelectAccount: (accountId: string) => void;
   onOpenExplorer: (detail: any) => void;
   onOpenDocs: () => void;
+  onConnectMetaMask?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -28,6 +29,7 @@ export const Header: React.FC<HeaderProps> = ({
   onSelectAccount,
   onOpenExplorer,
   onOpenDocs,
+  onConnectMetaMask,
 }) => {
   const [showAccountDropdown, setShowAccountDropdown] = useState(false);
   const [faucetLoading, setFaucetLoading] = useState(false);
@@ -150,6 +152,18 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
             </div>
           </div>
+
+          
+          {/* Metamask Button */}
+          {onConnectMetaMask && (
+            <button
+              onClick={onConnectMetaMask}
+              className="flex items-center space-x-1.5 rounded-lg bg-orange-500/10 border border-orange-500/30 px-2.5 py-1.5 text-xs font-medium text-orange-400 transition-all hover:bg-orange-500/20 hover:border-orange-500/50"
+            >
+              <svg viewBox="0 0 111 36" className="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg"><path d="M109.1 0H1.9C.9 0 0 .9 0 1.9v32.2c0 1 .9 1.9 1.9 1.9h107.2c1 0 1.9-.9 1.9-1.9V1.9C111 .9 110.1 0 109.1 0zm-8.6 28.5c-.7 0-1.2-.6-1.2-1.3v-4.5c0-.4-.3-.7-.7-.7H92v5.2c0 .7-.6 1.3-1.3 1.3H88c-.7 0-1.3-.6-1.3-1.3V10.2c0-.7.6-1.3 1.3-1.3h2.7c.7 0 1.3.6 1.3 1.3v5.2h6.7V10.2c0-.7.6-1.3 1.3-1.3h2.7c.7 0 1.3.6 1.3 1.3v17c0 .7-.5 1.3-1.2 1.3h-2.3zM16.5 28.5H12l-4-15v13.6c0 .8-.6 1.4-1.4 1.4H4.3c-.8 0-1.4-.6-1.4-1.4V9.6c0-.8.6-1.4 1.4-1.4h3.7c.5 0 .9.3 1.2.7l4.3 14 4.3-14c.2-.5.7-.7 1.2-.7h3.7c.8 0 1.4.6 1.4 1.4v17.5c0 .8-.6 1.4-1.4 1.4h-2.3c-.7 0-1.3-.6-1.3-1.4V13.5l-3.9 15z"/></svg>
+              <span className="hidden sm:inline">Connect Meta</span>
+            </button>
+          )}
 
           {/* Account / Wallet Switcher Dropdown */}
           <div className="relative">
