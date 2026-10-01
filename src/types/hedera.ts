@@ -9,7 +9,7 @@ export interface WalletAccount {
     balance: number;
     decimals: number;
   }[];
-  walletProvider: 'HashPack' | 'Blade' | 'Kabila' | 'MetaMask Snap';
+  walletProvider: 'HashPack' | 'Blade' | 'Kabila' | 'MetaMask Snap' | 'MetaMask';
   connected: boolean;
 }
 
