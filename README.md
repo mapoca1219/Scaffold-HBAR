@@ -21,8 +21,8 @@ npm create scaffold-hbar@latest --template mapoca1219/Scaffold-HBAR
 Manual Setup
 If you prefer to clone and run the repository directly:
 Bashg
-it clone [https://github.com/Marco-Caicedo/scaffold-hbar-enterprise-suite.git](https://github.com/Marco-Caicedo/scaffold-hbar-enterprise-suite.git)
-cd scaffold-hbar-enterprise-suite
+git clone [https://github.com/mapoca1219/Scaffold-HBAR.git](https://github.com/mapoca1219/Scaffold-HBAR.git)
+cd Scaffold-HBAR
 npm install
 npm run dev
 
