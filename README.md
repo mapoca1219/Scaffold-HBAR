@@ -17,44 +17,47 @@ Initialize a new dApp project using this template in a single command:
 
 ```bash
 npm create scaffold-hbar@latest --template mapoca1219/Scaffold-HBAR
+```
 
-Manual Setup
+### Manual Setup
 If you prefer to clone and run the repository directly:
-Bashg
-git clone [https://github.com/mapoca1219/Scaffold-HBAR.git](https://github.com/mapoca1219/Scaffold-HBAR.git)
+
+```bash
+git clone https://github.com/mapoca1219/Scaffold-HBAR.git
 cd Scaffold-HBAR
 npm install
 npm run dev
+```
 
-The application will be running locally at http://localhost:5173.
+The application will be running locally at `http://localhost:3000`.
 
-✨ Features & Production Use Cases
+---
+
+## ✨ Features & Production Use Cases
 
 This template implements three production-grade enterprise workflows connected to Hedera Testnet:
 
-1. 🤖 AI Pay-Per-Query (HBAR Micropayments + HCS Notarization)
+### 1. 🤖 AI Pay-Per-Query (HBAR Micropayments + HCS Notarization)
+- **Frictionless AI Billing:** Executes micro-settlements (0.01 to 0.1 HBAR) per agent query with sub-3-second finality.
+- **Predictable Cost Model:** Leverages Hedera's fixed USD-pegged fee structure (\$0.0001 per consensus message).
+- **Cryptographic Notarization:** Every query payload, receipt, and timestamp is hashed via SHA-256 and anchored to an immutable Hedera Consensus Service (HCS) Topic.
 
-Frictionless AI Billing: Executes micro-settlements (0.01 to 0.1 HBAR) per agent query with sub-3-second finality.
+### 2. 🔐 Zero-Contract Token-Gating (HTS Engine)
+- **Native Asset Verification:** Restricts access to premium enterprise dashboards using the Hedera Token Service (HTS).
+- **Zero Smart Contract Overhead:** Bypasses EVM execution overhead by querying native token balances directly through Hedera Mirror Node REST APIs.
+- **Lower Deployment Costs:** Mint, associate, and verify fungible or non-fungible tokens without writing, auditing, or deploying custom Solidity contracts.
 
-Predictable Cost Model: Leverages Hedera's fixed USD-pegged fee structure ($0.0001 per consensus message).
+### 3. 🏢 Enterprise Audit Trail (HCS Data Notary)
+- **Compliance & Provenance:** Decentralized event logger tailored for supply chain milestones, quality checks, and dispatch registries.
+- **Verifiable Audit Chains:** Displays Sequence Numbers, Topic IDs, Running Hashes, and Consensus Timestamps directly via a built-in HashScan modal.
+- **Structured Export:** One-click export of notarized transaction receipts to signed JSON format for regulatory audits.
 
-Cryptographic Notarization: Every query payload, receipt, and timestamp is hashed via SHA-256 and anchored to an immutable Hedera Consensus Service (HCS) Topic.
+---
 
-2. 🔐 Zero-Contract Token-Gating (HTS Engine)Native Asset Verification: Restricts access to premium enterprise dashboards using the Hedera Token Service (HTS).
+## 🏗 System Architecture
 
-Zero Smart Contract Overhead: Bypasses EVM execution overhead by querying native token balances directly through Hedera Mirror Node REST APIs.
-
-Lower Deployment Costs: Mint, associate, and verify fungible or non-fungible tokens without writing, auditing, or deploying custom Solidity contracts.
-
-3. 🏢 Enterprise Audit Trail (HCS Data Notary)
-
-Compliance & Provenance: Decentralized event logger tailored for supply chain milestones, quality checks, and dispatch registries.
-
-Verifiable Audit Chains: Displays Sequence Numbers, Topic IDs, Running Hashes, and Consensus Timestamps directly via a built-in HashScan modal.
-
-Structured Export: One-click export of notarized transaction receipts to signed JSON format for regulatory audits.
-
-🏗 System Architecture ┌────────────────────────────────────────────────────────┐
+```text
+┌────────────────────────────────────────────────────────┐
 │            Frontend (React 19 + Tailwind v4)           │
 ├──────────────────────────┬─────────────────────────────┤
 │   Dual-Wallet Layer      │   Core Enterprise Modules   │
@@ -75,55 +78,71 @@ Structured Export: One-click export of notarized transaction receipts to signed 
              │ Hedera Network (Testnet)  │
              │   HCS  │  HTS  │  HSCS    │
              └───────────────────────────┘
+```
 
+---
 
-🎨 UI/UX & Developer Ergonomics
+## 🎨 UI/UX & Developer Ergonomics
 
-Mesh Dark Mode: Clean, professional enterprise interface built with Tailwind CSS.
+- **Mesh Dark Mode:** Clean, professional enterprise interface built with Tailwind CSS.
+- **Dual-Wallet Compatibility:** Seamless support for native Hedera Account IDs (`0.0.x`) and EVM hex addresses (`0x...`).
+- **Interactive Dev Faucet:** Built-in balance simulator allowing instant state testing before connecting external wallets.
+- **Live HashScan Inspector:** Deep links and modal previews directly pointing to `https://hashscan.io/testnet`.
 
-Dual-Wallet Compatibility: Seamless support for native Hedera Account IDs (0.0.x) and EVM hex addresses (0x...).
+---
 
-Interactive Dev Faucet: Built-in balance simulator allowing instant state testing before connecting external wallets.
+## 🛠 Tech Stack
 
-Live HashScan Inspector: Deep links and modal previews directly pointing to https://hashscan.io/testnet.
+| Layer | Technology |
+| :--- | :--- |
+| **Frontend Framework** | React 19 + Vite |
+| **Language** | TypeScript |
+| **Styling** | Tailwind CSS v4 + Lucide Icons |
+| **Hedera Integration** | Official `@hashgraph/sdk` + Mirror Node REST APIs |
+| **Explorer Integration** | HashScan Mirror Node Explorer |
 
-🛠 Tech Stack
-Layer                   Technology     
-Frontend Framework      React 19 + Vite
-Language                TypeScript
-Styling                 Tailwind CSS v4 + Lucide Icons
-Hedera Integration      Official @hashgraph/sdk + Mirror Node REST APIs
-Explorer Integration     HashScan Mirror Node Explorer
+---
 
-📚 Environment Configuration
+## 📚 Environment Configuration
 
 To connect directly to your own Hedera Testnet account, create a local environment file:
 
-Bash
+```bash
 cp .env.example .env.local
+```
+
 Configure your credentials:
-Fragmento de código
+
+```env
 VITE_HEDERA_NETWORK=testnet
 VITE_HEDERA_ACCOUNT_ID=0.0.YOUR_ACCOUNT_ID
 VITE_HEDERA_PRIVATE_KEY=YOUR_DER_OR_HEX_PRIVATE_KEY
 VITE_HEDERA_TOPIC_ID=0.0.YOUR_HCS_TOPIC_ID
+```
 
-(Note: The template includes simulated fallbacks so developers can clone, build, and test UI components immediately even without active network credentials).
+*(Note: The template includes simulated fallbacks so developers can clone, build, and test UI components immediately even without active network credentials).*
 
-🧪 Testing the Template
+---
+
+## 🧪 Testing the Template
 
 To verify the template passes the mechanical requirements locally:
 
-Bash
+```bash
 # Verify build integrity
 npm run build
 
 # Preview production bundle
 npm run preview
+```
 
+---
 
-🤝 Contributing
+## 🤝 Contributing
 
 Contributions are welcome. Feel free to open an issue or submit a pull request with additional Hedera service templates (such as Hedera Smart Contract Service or File Service).
 
-📄 LicenseThis project is open-source under the MIT License.
+## 📄 License
+
+This project is open-source under the MIT License.
+
