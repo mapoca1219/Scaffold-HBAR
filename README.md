@@ -16,7 +16,7 @@ Built for the **Scaffold-HBAR Template Bounty** to provide developers with a rob
 Initialize a new dApp project using this template in a single command:
 
 ```bash
-npm create scaffold-hbar@latest --template Marco-Caicedo/scaffold-hbar-enterprise-suite
+npm create scaffold-hbar@latest --template mapoca1219/Scaffold-HBAR
 
 Manual Setup
 If you prefer to clone and run the repository directly:
